@@ -78,3 +78,7 @@ local/
 
 # React/Vite specific
 stats.html
+
+
+# deploying
+deploying_proxmox.sh
