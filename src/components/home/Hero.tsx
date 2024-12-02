@@ -28,7 +28,7 @@ const Hero: React.FC = () => {
           </motion.div>
           <div className="space-y-4">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter">
-              Hassan
+              Mikawi
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-[700px] mx-auto">
               Passionate software developer specializing in web development and creating innovative solutions.
