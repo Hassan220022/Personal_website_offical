@@ -22,12 +22,15 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          
+              
       - name: Install dependencies
         run: npm ci
-        
-      - name: Run linting
+      
+      - name: Run lint
         run: npm run lint
+
+      - name: Run tests
+        run: npm test
 
   build:
     name: Build
@@ -41,18 +44,18 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          
+              
       - name: Install dependencies
         run: npm ci
         
       - name: Build application
         run: npm run build
-        
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: dist
-          path: dist/
+          name: build
+          path: build/
           
   deploy:
     name: Deploy
@@ -64,27 +67,20 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v3
         with:
-          name: dist
-          path: dist/
-          
-      - name: Setup SSH
+          name: build
+          path: build/
+
+      - name: Set up SSH
         uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          
-      - name: Add known hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-          
+
+      - name: Add server to known hosts
+        run: ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
       - name: Deploy to server
-        env:
-          SERVER_IP: ${{ secrets.SERVER_IP }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-          DEPLOY_PATH: /var/www/my-website/Personal_website_offical
         run: |
-          rsync -avz --delete dist/ $SERVER_USER@$SERVER_IP:$DEPLOY_PATH
-          ssh $SERVER_USER@$SERVER_IP "cd $DEPLOY_PATH && pm2 restart react-app || pm2 start npm --name react-app -- start"
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "cd /var/www/my-website/Personal_website_offical && git pull && npm install && pm2 restart react-app || pm2 start npm --name react-app -- start"
 
   notify:
     name: Notify
