@@ -57,6 +57,8 @@ const Layout: React.FC = () => {
       <main className="flex-1 mt-16 px-4">
         <Outlet />
       </main>
+
+      <ContactDropdown />
     </div>
   );
 };
