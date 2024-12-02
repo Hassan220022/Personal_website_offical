@@ -84,43 +84,5 @@ pm2 start npm --name "react-app" -- start
 pm2 save
 sudo pm2 startup | sudo bash
 
-# Set up GitHub Actions CI/CD workflow
-echo "Setting up GitHub Actions CI/CD workflow..."
-mkdir -p .github/workflows
-
-cat <<EOF > .github/workflows/deploy.yml
-name: Deploy React App
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18'
-
-    - name: Install dependencies
-      run: npm install
-
-    - name: Deploy to server
-      run: |
-        ssh -o StrictHostKeyChecking=no $(whoami)@$(hostname -I | awk '{print $1}') << 'SSH_COMMANDS'
-          cd $PROJECT_DIR
-          git pull
-          npm install
-          pm2 restart react-app
-        SSH_COMMANDS
-EOF
-
 # Print completion message
 echo "Setup complete! Your React app is live at http://$IP_ADDRESS and proxied to port 5173."
