@@ -22,7 +22,7 @@ const ProfileHeader: React.FC = () => {
       </motion.div>
 
       <div className="flex-1 text-center md:text-left">
-        <h1 className="text-3xl font-bold mb-2">Hassan bor3i</h1>
+        <h1 className="text-3xl font-bold mb-2">Hassan Mikawi</h1>
         <p className="text-muted-foreground mb-4">Software Developer</p>
         
         <div className="flex flex-wrap justify-center md:justify-start gap-4">
