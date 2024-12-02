@@ -36,7 +36,7 @@ jobs:
       - name: Test SSH Connection
         uses: appleboy/ssh-action@v0.1.4
         with:
-          host: 192.168.1.50
+          host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           debug: true
