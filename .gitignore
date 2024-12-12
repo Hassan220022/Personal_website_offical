@@ -79,6 +79,25 @@ local/
 # React/Vite specific
 stats.html
 
+# Local .terraform directories
+**/.terraform/*
+
+# Terraform variables file
+*.tfvars
+*.tfvars.json
+
+# Crash log files
+crash.log
+
+# Terraform override files
+override.tf
+override.tf.json
+
+# Automatically generated files
+.terraformrc
+terraform.rc
 
 # deploying
 deploying_proxmox.sh
+
+terraform.tfvars
