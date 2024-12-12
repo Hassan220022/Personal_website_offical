@@ -7,6 +7,7 @@ set -e
 cd /var/www/personal_website_official
 
 # Pull the latest changes from the repository
+git pull
 git fetch --all
 git reset --hard origin/main
 
