@@ -27,8 +27,9 @@ jobs:
         shell: bash
 
       - name: Run SSH Command
+        # Force pseudo-terminal allocation with `-tt`
         run: |
-          ssh -i ~/.ssh/id_ed25519 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -tt -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
             cd /var/www/personal_website_official
             git pull
             git fetch --all
