@@ -16,26 +16,23 @@ jobs:
       - name: Install SSH Key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
         shell: bash
 
       - name: Add Known Hosts
         run: |
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
         shell: bash
 
       - name: Run SSH Command
-        # Force pseudo-terminal allocation with `-tt`
         run: |
-          ssh -o StrictHostKeyChecking=no -tt -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
+          ssh -o StrictHostKeyChecking=no -tt -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} '
             cd /var/www/personal_website_official
-            git pull
             git fetch --all
             git reset --hard origin/main
             npm install
             pm2 restart personal_website
             echo "Application updated and restarted successfully."
-          EOF
+          '
         shell: bash
