@@ -29,13 +29,13 @@ jobs:
         uses: appleboy/ssh-action@v0.1.4
         with:
           host: ${{ secrets.SERVER_IP }}
-          # username: ${{ secrets.SERVER_USER }}
-          # key: ${{ secrets.SSH_PRIVATE_KEY }}
-          # port: ${{ secrets.SERVER_PORT }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /var/www/personal_website_official
-            # git fetch --all
-            # git reset --hard origin/main
-            # npm install
-            # pm2 restart personal_website
-            bash /var/www/personal_website_official/terraform/scripts/update_project.sh
+            git pull
+            git fetch --all
+            git reset --hard origin/main
+            npm install
+            pm2 restart personal_website
+            echo "Application updated and restarted successfully."
