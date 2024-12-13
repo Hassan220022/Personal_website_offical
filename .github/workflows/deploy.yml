@@ -18,23 +18,24 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
+        shell: bash
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Add Known Hosts
         run: |
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
-
         shell: bash
 
       - name: Run SSH Command
         run: |
-            ssh -i ~/.ssh/id_ed25519 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}'
+          ssh -i ~/.ssh/id_ed25519 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} '
             cd /var/www/personal_website_official
             git pull
             git fetch --all
             git reset --hard origin/main
             npm install
             pm2 restart personal_website
-            echo "Application updated and restarted successfully."'
+            echo "Application updated and restarted successfully."
+          '
         shell: bash
