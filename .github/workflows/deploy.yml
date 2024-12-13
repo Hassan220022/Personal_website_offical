@@ -29,12 +29,12 @@ jobs:
 
       - name: Run SSH Command
         run: |
-          ssh -o StrictHostKeyChecking=no -tt -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} '
+            ssh -i ~/.ssh/id_ed25519 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}'
             cd /var/www/personal_website_official
+            git pull
             git fetch --all
             git reset --hard origin/main
             npm install
             pm2 restart personal_website
-            echo "Application updated and restarted successfully."
-          '
+            echo "Application updated and restarted successfully."'
         shell: bash
