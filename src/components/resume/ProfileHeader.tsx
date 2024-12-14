@@ -32,7 +32,7 @@ const ProfileHeader: React.FC = () => {
             label="GitHub Profile"
           />
           <SocialLink
-            href="https://www.linkedin.com/in/hassan-mikawi-1314b9238/"
+            href="https://www.linkedin.com/in/mikawi"
             icon={<Linkedin />}
             label="LinkedIn Profile"
           />
