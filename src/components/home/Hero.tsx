@@ -21,7 +21,7 @@ const Hero: React.FC = () => {
             <img
                 src="https://lh3.googleusercontent.com/pw/AP1GczNkYDrCRt5uqo3yBoWZAKrc2tignYheIM3uhjDq8qGx73SqEPySi44j0ygNKzokZM8kATHKPvedQhkQzWB8dL4DWFWIdbiomYtLhrlyukeeZXGssV4PqPtb5B7Hkc1Ya02HabAueR2as46x29vqIPcU=w1506-h2008-s-no-gm"
                 alt="Mike's Profile"
-                className="w-[200px] h-[200px] rounded-full object-cover shadow-lg relative"
+                className="w-[300px] h-[300px] rounded-full object-cover shadow-lg relative"
                 loading="lazy"
             />
           </motion.div>
