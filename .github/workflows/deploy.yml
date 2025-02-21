@@ -18,24 +18,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y sshpass
 
-      - name: Generate SSH Key Pair
-        run: |
-          ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa_temp -N ""
-          cat ~/.ssh/id_rsa_temp.pub
-        id: generate_key
-
-      - name: Add Known Hosts
-        run: |
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-
-      - name: Copy SSH Public Key to Server
-        run: |
-          sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh-copy-id -i ~/.ssh/id_rsa_temp.pub -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}
-          
       - name: Deploy and Restart Application
         run: |
-          chmod 600 ~/.ssh/id_rsa_temp
-          ssh -i ~/.ssh/id_rsa_temp -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             cd /var/www/personal_website_official
             git pull
             git fetch --all
