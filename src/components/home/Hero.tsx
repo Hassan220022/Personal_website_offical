@@ -19,11 +19,10 @@ const Hero: React.FC = () => {
           >
             <div className="absolute inset-0 bg-primary/20 rounded-full blur-3xl" />
             <img
-                src="https://avatars.githubusercontent.com/u/90404558?v=4"
-              alt="Mike's Profile"
-              className="w-full h-full rounded-full object-cover shadow-lg relative"
-              loading="lazy"
-              // srcSet="/images/profile.jpg 2x"
+                src="https://lh3.googleusercontent.com/pw/AP1GczNkYDrCRt5uqo3yBoWZAKrc2tignYheIM3uhjDq8qGx73SqEPySi44j0ygNKzokZM8kATHKPvedQhkQzWB8dL4DWFWIdbiomYtLhrlyukeeZXGssV4PqPtb5B7Hkc1Ya02HabAueR2as46x29vqIPcU=w1506-h2008-s-no-gm"
+                alt="Mike's Profile"
+                className="w-[200px] h-[200px] rounded-full object-cover shadow-lg relative"
+                loading="lazy"
             />
           </motion.div>
           <div className="space-y-4">
