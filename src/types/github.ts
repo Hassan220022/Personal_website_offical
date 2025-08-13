@@ -7,8 +7,16 @@ export interface Repository {
   stargazers_count: number;
   language: string;
   updated_at: string;
+  created_at: string;
   topics: string[];
   homepage: string;
+  // Enhanced fields to match CustomProject structure
+  status?: 'completed' | 'in-progress' | 'archived';
+  features?: string[];
+  highlights?: string[];
+  category?: 'mobile' | 'academic' | 'graduation' | 'ai' | 'smart-home' | 'web' | 'professional';
+  year?: number;
+  technologies?: string[];
 }
 
 export interface GitHubProfile {

@@ -3,6 +3,7 @@ import { Link, Outlet } from 'react-router-dom';
 import { Github, FileText, Home, Menu, X } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import ContactDropdown from './ContactDropdown';
+import Chatbot from './Chatbot';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Layout: React.FC = () => {
@@ -54,11 +55,12 @@ const Layout: React.FC = () => {
         </AnimatePresence>
       </nav>
 
-      <main className="flex-1 mt-16 px-4">
+      <main className="flex-1 pt-16">
         <Outlet />
       </main>
 
       <ContactDropdown />
+      <Chatbot />
     </div>
   );
 };

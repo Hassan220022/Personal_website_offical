@@ -4,11 +4,14 @@ import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 import { getRepositories, getStarredRepositories, getAllRepositories } from '../services/github';
 import ProjectCard from '../components/ProjectCard';
+import CustomProjectCard from '../components/CustomProjectCard';
+import { customProjects } from '../data/customProjects';
 
 const ProjectsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState<'all' | 'starred'>('all');
+  const [filter, setFilter] = useState<'all' | 'starred' | 'custom'>('all');
   const [techFilter, setTechFilter] = useState<string>('');
+  const [categoryFilter, setCategoryFilter] = useState<string>('');
 
   const { data: repos = [], isLoading: reposLoading } = useQuery(
     'repositories',
@@ -29,6 +32,7 @@ const ProjectsPage: React.FC = () => {
   );
 
   const filteredRepos = useMemo(() => {
+    if (filter === 'custom') return [];
     const reposToFilter = filter === 'all' ? repos : starredRepos;
     
     return reposToFilter.filter(repo => {
@@ -45,14 +49,43 @@ const ProjectsPage: React.FC = () => {
     });
   }, [repos, starredRepos, searchTerm, techFilter, filter]);
 
+  const filteredCustomProjects = useMemo(() => {
+    if (filter !== 'custom' && filter !== 'all') return [];
+    
+    return customProjects.filter(project => {
+      const matchesSearch = (
+        project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      
+      const matchesTech = !techFilter || 
+        project.technologies.some(tech => tech.toLowerCase().includes(techFilter.toLowerCase()));
+      
+      const matchesCategory = !categoryFilter || project.category === categoryFilter;
+
+      return matchesSearch && matchesTech && matchesCategory;
+    });
+  }, [searchTerm, techFilter, categoryFilter, filter]);
+
   const technologies = useMemo(() => {
     const techSet = new Set<string>();
     repos.forEach(repo => {
       if (repo.language) techSet.add(repo.language);
       repo.topics?.forEach(topic => techSet.add(topic));
     });
+    customProjects.forEach(project => {
+      project.technologies.forEach(tech => techSet.add(tech));
+    });
     return Array.from(techSet).sort();
   }, [repos]);
+
+  const categories = useMemo(() => {
+    const categorySet = new Set<string>();
+    customProjects.forEach(project => {
+      categorySet.add(project.category);
+    });
+    return Array.from(categorySet).sort();
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -85,9 +118,24 @@ const ProjectsPage: React.FC = () => {
                 <option key={tech} value={tech}>{tech}</option>
               ))}
             </select>
+            {(filter === 'custom' || filter === 'all') && (
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="w-full sm:w-48 p-2 bg-card border border-border rounded-lg focus:ring-2 ring-primary/20 focus:border-primary"
+              >
+                <option value="">All Categories</option>
+                {categories.map(category => (
+                  <option key={category} value={category}>
+                    {category.charAt(0).toUpperCase() + category.slice(1).replace('-', ' ')}
+                  </option>
+                ))}
+              </select>
+            )}
             <div className="flex gap-2">
-              <FilterButton active={filter === 'all'} onClick={() => setFilter('all')} label="All Projects" />
-              <FilterButton active={filter === 'starred'} onClick={() => setFilter('starred')} label="Starred" />
+              <FilterButton active={filter === 'all'} onClick={() => setFilter('all')} label="All" />
+              <FilterButton active={filter === 'custom'} onClick={() => setFilter('custom')} label="Featured" />
+              <FilterButton active={filter === 'starred'} onClick={() => setFilter('starred')} label="GitHub" />
             </div>
           </div>
         </div>
@@ -100,16 +148,44 @@ const ProjectsPage: React.FC = () => {
         ) : (
           <>
             <p className="text-muted-foreground">
-              Found {filteredRepos.length} repositories
+              Found {filter === 'custom' ? filteredCustomProjects.length : 
+                     filter === 'all' ? filteredRepos.length + filteredCustomProjects.length : 
+                     filteredRepos.length} projects
             </p>
-            <motion.div
-              layout
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-            >
-              {filteredRepos.map((repo) => (
-                <ProjectCard key={repo.id} repo={repo} />
-              ))}
-            </motion.div>
+            
+            {/* Custom Projects Section */}
+            {(filter === 'custom' || filter === 'all') && filteredCustomProjects.length > 0 && (
+              <div className="space-y-4">
+                {filter === 'all' && (
+                  <h2 className="text-2xl font-bold text-foreground">Featured Projects</h2>
+                )}
+                <motion.div
+                  layout
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
+                  {filteredCustomProjects.map((project) => (
+                    <CustomProjectCard key={project.id} project={project} />
+                  ))}
+                </motion.div>
+              </div>
+            )}
+            
+            {/* GitHub Repositories Section */}
+            {(filter === 'starred' || filter === 'all') && filteredRepos.length > 0 && (
+              <div className="space-y-4">
+                {filter === 'all' && (
+                  <h2 className="text-2xl font-bold text-foreground">GitHub Repositories</h2>
+                )}
+                <motion.div
+                  layout
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                >
+                  {filteredRepos.map((repo) => (
+                    <ProjectCard key={repo.id} repo={repo} />
+                  ))}
+                </motion.div>
+              </div>
+            )}
           </>
         )}
       </motion.div>

@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail } from 'lucide-react';
 
 const Hero: React.FC = () => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
   return (
-    <motion.section 
+    <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="py-12 md:py-24 lg:py-32"
@@ -15,22 +18,37 @@ const Hero: React.FC = () => {
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2 }}
-            className="relative"
+            className="relative w-[280px] h-[280px] md:w-[320px] md:h-[320px] lg:w-[360px] lg:h-[360px]"
           >
             <div className="absolute inset-0 bg-primary/20 rounded-full blur-3xl" />
-            <img
-                src="https://lh3.googleusercontent.com/pw/AP1GczNkYDrCRt5uqo3yBoWZAKrc2tignYheIM3uhjDq8qGx73SqEPySi44j0ygNKzokZM8kATHKPvedQhkQzWB8dL4DWFWIdbiomYtLhrlyukeeZXGssV4PqPtb5B7Hkc1Ya02HabAueR2as46x29vqIPcU=w1506-h2008-s-no-gm"
-                alt="Mike's Profile"
-                className="w-[300px] h-[300px] rounded-full object-cover shadow-lg relative"
+            {!imageError ? (
+              <img
+                src="https://avatars.githubusercontent.com/u/90404558?v=4"
+                alt="Hassan Mikawi - Professional Profile Photo"
+                className={`w-full h-full rounded-full object-cover shadow-lg relative transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'
+                  }`}
                 loading="lazy"
-            />
+                srcSet="https://avatars.githubusercontent.com/u/90404558?v=4 2x"
+                onLoad={() => setImageLoaded(true)}
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <div className="w-full h-full rounded-full bg-muted flex items-center justify-center shadow-lg relative">
+                <span className="text-6xl font-bold text-muted-foreground">HM</span>
+              </div>
+            )}
+
+            {/* Loading skeleton */}
+            {!imageLoaded && !imageError && (
+              <div className="absolute inset-0 rounded-full bg-muted animate-pulse" />
+            )}
           </motion.div>
           <div className="space-y-4">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter">
-              Mikawi
+              Hassan Mikawi
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-[700px] mx-auto">
-              Passionate software developer specializing in web development and creating innovative solutions.
+              Computer Engineering graduate from AAST, specializing in AI, embedded systems, and innovative programming languages. Creator of Flex programming language and smart home automation solutions.
             </p>
           </div>
           <div className="flex gap-4">

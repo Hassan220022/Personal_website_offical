@@ -7,4 +7,23 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // React ecosystem
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          // PDF libraries
+          'pdf-vendor': ['react-pdf'],
+          // UI libraries
+          'ui-vendor': ['framer-motion', 'lucide-react', '@radix-ui/react-slider', '@radix-ui/react-tooltip'],
+          // Utility libraries
+          'utils-vendor': ['axios', 'date-fns'],
+          // AI/API libraries
+          'ai-vendor': ['openai', '@pinecone-database/pinecone'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  },
 })
