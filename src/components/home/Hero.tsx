@@ -48,7 +48,7 @@ const Hero: React.FC = () => {
               Hassan Mikawi
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-[700px] mx-auto">
-              Computer Engineering graduate from AAST, specializing in AI, embedded systems, and innovative programming languages. Creator of Flex programming language and smart home automation solutions.
+              Computer Engineering graduate from AAST, specializing in AI, full stack development, and innovative programming languages. Creator of Flex programming language and smart home automation solutions.
             </p>
           </div>
           <div className="flex gap-4">

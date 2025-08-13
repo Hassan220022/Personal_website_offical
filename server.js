@@ -16,7 +16,7 @@ const __dirname = dirname(__filename);
 const app = express();
 const BASE_PORT = 3000;
 const instanceId = process.env.NODE_APP_INSTANCE || 0;
-const PORT = BASE_PORT + parseInt(instanceId);
+const PORT = process.env.PORT || (BASE_PORT + parseInt(instanceId));
 
 // Security middleware
 app.use(helmet({
@@ -58,6 +58,16 @@ import githubRoutes from './src/api/github.js';
 app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/rag', ragRoutes);
 app.use('/api/github', githubRoutes);
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Handle 404 for API routes
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ error: 'API endpoint not found' });
+});
 
 // Serve static files from the dist directory
 app.use(express.static(join(__dirname, 'dist')));

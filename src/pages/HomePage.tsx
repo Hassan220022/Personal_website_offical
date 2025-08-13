@@ -11,7 +11,6 @@ const HomePage: React.FC = () => {
       {/* Hero Section */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Hero />
-        <JourneySection />
       </div>
 
       {/* About Content */}
@@ -243,6 +242,11 @@ const HomePage: React.FC = () => {
             </div>
           </motion.section>
         </motion.div>
+      </div>
+
+      {/* Journey Section */}
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <JourneySection />
       </div>
     </div>
   );

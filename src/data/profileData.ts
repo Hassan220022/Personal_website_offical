@@ -109,18 +109,18 @@ export const skills: Skill[] = [
   },
   {
     category: 'Specialized Skills',
-    items: ['Embedded Systems', 'CI/CD Pipelines', 'AR Development', 'IoT', 'Compiler Design'],
+    items: ['Full Stack Engineering', 'CI/CD Pipelines', 'AR Development', 'IoT', 'Compiler Design'],
     icon: '⚡'
   }
 ];
 
 // About Me Content
 export const aboutMeContent = {
-  introduction: `I am a recent graduate from the Arab Academy for Science, Technology, and Maritime Transport (AAST) with a degree in Computer Engineering. I originally began my studies in Mechatronics, but later switched to Computer Engineering after discovering my passion for programming, embedded systems, and software development.`,
+  introduction: `I am a recent graduate from the Arab Academy for Science, Technology, and Maritime Transport (AAST) with a degree in Computer Engineering. I originally began my studies in Mechatronics, but later switched to Computer Engineering after discovering my passion for programming, full stack engineering, and software development.`,
 
   firstProject: `My first coding project was a terminal-based arcade game written in C. It featured simple AI logic, including the Minimax algorithm for decision-making, as well as difficulty levels ranging from random to strategic. This project was my first real dive into programming, and it set the foundation for my journey in computer engineering.`,
 
-  academicExploration: `During my academic years, I explored a range of technical domains including Networks, Embedded Systems, and Microprocessors. In 2021, I enrolled in an Embedded Systems course at IMT where I developed a smart home project. The system integrated with Home Assistant, allowing control over devices such as smart curtains and switches. I even set up my own home server for media storage, personal websites, and local AI applications.`,
+  academicExploration: `During my academic years, I explored a range of technical domains including Networks, Full Stack Engineering, and Microprocessors. In 2021, I enrolled in a Full Stack Engineering course at IMT where I developed a smart home project. The system integrated with Home Assistant, allowing control over devices such as smart curtains and switches. I even set up my own home server for media storage, personal websites, and local AI applications.`,
 
   developmentApproach: `With the rise of Large Language Models (LLMs), I adopted a "voice-coding" workflow. Instead of typing everything by hand, I use prompts to instruct AI tools to generate and modify code, speeding up my development process while focusing on architecture and logic.`
 };

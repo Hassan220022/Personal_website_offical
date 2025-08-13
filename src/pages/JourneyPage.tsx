@@ -67,8 +67,8 @@ const JourneyPage: React.FC = () => {
             />
             <TimelineEvent
               year="2021"
-              title="Smart Home & Embedded Systems"
-              description="Built smart home devices (motorized curtains, Wi‑Fi smart switches) and set up a home server for media, websites, and local AI apps. Integrated everything with Home Assistant after taking an Embedded Systems course at IMT."
+              title="Smart Home & Full Stack Engineering"
+              description="Built smart home devices (motorized curtains, Wi‑Fi smart switches) and set up a home server for media, websites, and local AI apps. Integrated everything with Home Assistant after taking a Full Stack Engineering course at IMT."
               icon={<HomeIcon className="w-6 h-6" />}
             />
           </div>
@@ -104,7 +104,7 @@ const JourneyPage: React.FC = () => {
             <TimelineEvent
               year="2021"
               title="Bioinformatics Engineering Student"
-              description="Exploring bioinformatics and excelling in computer science studies at AASTMT. Enrolled in Embedded Systems course at IMT, developing smart home projects integrated with Home Assistant including motorized curtains and Wi‑Fi controlled switches."
+              description="Exploring bioinformatics and excelling in computer science studies at AASTMT. Enrolled in Full Stack Engineering course at IMT, developing smart home projects integrated with Home Assistant including motorized curtains and Wi‑Fi controlled switches."
               icon={<GraduationCap className="w-6 h-6" />}
             />
             <TimelineEvent

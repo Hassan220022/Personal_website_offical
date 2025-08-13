@@ -112,7 +112,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
   };
 
   return (
-    <div className={`fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 ${className}`}>
+    <div className={`fixed bottom-4 left-4 md:bottom-6 md:left-6 z-50 ${className}`}>
       {/* Chat Toggle Button */}
       <AnimatePresence>
         {!isOpen && (
@@ -141,7 +141,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
             animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
             exit={{ opacity: 0, y: 30, scale: 0.9, rotateX: 15 }}
             transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 30 }}
-            className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 w-80 sm:w-96 h-[32rem] sm:h-[36rem] flex flex-col overflow-hidden mb-4 mr-0 sm:mr-4"
+            className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 w-80 sm:w-96 h-[32rem] sm:h-[36rem] flex flex-col overflow-hidden mb-4 ml-0 sm:ml-4"
             style={{
               background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%)',
               ...(document.documentElement.classList.contains('dark') && {

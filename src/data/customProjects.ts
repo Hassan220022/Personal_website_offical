@@ -126,7 +126,7 @@ export const customProjects: CustomProject[] = [
     id: 'self-driving-car',
     name: 'Self-Driving Car Project',
     description: 'An Arduino-based autonomous vehicle using sensors for automatic navigation and obstacle avoidance.',
-    technologies: ['Arduino', 'C', 'Sensors', 'Embedded Systems'],
+    technologies: ['Arduino', 'C', 'Sensors', 'Full Stack Engineering'],
     category: 'academic',
     status: 'completed',
     year: 2021,
@@ -137,7 +137,7 @@ export const customProjects: CustomProject[] = [
       'Real-time decision making'
     ],
     highlights: [
-      'Embedded systems programming',
+      'Full stack engineering',
       'Hardware-software integration',
       'Real-time processing'
     ]
@@ -349,8 +349,8 @@ export const customProjects: CustomProject[] = [
   {
     id: 'imt-smart-home-project',
     name: 'IMT Smart Home Integration',
-    description: 'Comprehensive smart home project developed during Embedded Systems course at IMT, featuring Home Assistant integration.',
-    technologies: ['Home Assistant', 'Arduino', 'IoT', 'Embedded Systems'],
+    description: 'Comprehensive smart home project developed during Full Stack Engineering course at IMT, featuring Home Assistant integration.',
+    technologies: ['Home Assistant', 'Arduino', 'IoT', 'Full Stack Engineering'],
     category: 'smart-home',
     status: 'completed',
     year: 2021,

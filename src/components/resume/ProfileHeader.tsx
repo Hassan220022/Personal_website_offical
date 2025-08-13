@@ -62,7 +62,7 @@ const ProfileHeader: React.FC = () => {
           transition={{ delay: 0.4, duration: 0.5 }}
           className="text-muted-foreground mb-4 text-sm sm:text-base leading-relaxed"
         >
-          Computer Engineering Graduate | AI & Embedded Systems Specialist | Creator of Flex Programming Language
+          Computer Engineering Graduate | AI & Full Stack Engineering Specialist | Creator of Flex Programming Language
         </motion.p>
 
         {/* Additional Info */}
