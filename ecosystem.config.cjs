@@ -22,5 +22,24 @@ module.exports = {
     time: true,
     merge_logs: true,
     log_date_format: 'YYYY-MM-DD HH:mm Z'
+  }, {
+    name: 'friend-website',
+    script: 'npm',
+    args: 'run preview:prod',
+    cwd: '/var/www/mostafa_ashraf',
+    exec_mode: 'fork',
+    instances: 1,
+    autorestart: true,
+    watch: false,
+    max_memory_restart: '1G',
+    env: {
+      NODE_ENV: 'production'
+    },
+    error_file: '/var/www/mostafa_ashraf/logs/err.log',
+    out_file: '/var/www/mostafa_ashraf/logs/out.log',
+    log_file: '/var/www/mostafa_ashraf/logs/combined.log',
+    time: true,
+    merge_logs: true,
+    log_date_format: 'YYYY-MM-DD HH:mm Z'
   }]
 };
