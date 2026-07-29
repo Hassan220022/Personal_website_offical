@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
-import { getRepositories, getStarredRepositories, getAllRepositories } from '../services/github';
+import { getStarredRepositories, getAllRepositories } from '../services/github';
 import ProjectCard from '../components/ProjectCard';
 import CustomProjectCard from '../components/CustomProjectCard';
 import { customProjects } from '../data/customProjects';

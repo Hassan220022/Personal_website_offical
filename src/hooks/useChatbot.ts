@@ -15,7 +15,7 @@ export function useChatbot(): UseChatbotReturn {
   const [initializationError, setInitializationError] = useState<string | null>(null);
   const [documentsProcessed, setDocumentsProcessed] = useState(0);
 
-  // Auto-initialize RAG system with Hassan's GitHub data on mount
+  // Auto-initialize RAG system with Mikawi's GitHub data on mount
   useEffect(() => {
     const autoInitialize = async () => {
       try {
@@ -26,7 +26,7 @@ export function useChatbot(): UseChatbotReturn {
           return;
         }
 
-        // If not initialized, auto-initialize with Hassan's GitHub username
+        // If not initialized, auto-initialize with Mikawi's GitHub username
         setIsInitializing(true);
         const result = await initializeRagSystem('Hassan220022');
         

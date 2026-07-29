@@ -33,7 +33,7 @@ const PDFViewer: React.FC = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'Hassan_Mikawi_CV.pdf';
+      link.download = 'Mikawi_Sherif_CV.pdf';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -43,7 +43,7 @@ const PDFViewer: React.FC = () => {
       // Fallback to direct link
       const link = document.createElement('a');
       link.href = pdfUrl;
-      link.download = 'Hassan_Mikawi_CV.pdf';
+      link.download = 'Mikawi_Sherif_CV.pdf';
       link.target = '_blank';
       document.body.appendChild(link);
       link.click();

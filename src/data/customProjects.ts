@@ -182,7 +182,6 @@ export const customProjects: CustomProject[] = [
       'Complete development ecosystem'
     ],
     links: {
-      documentation: '#'
     }
   },
 
@@ -340,7 +339,7 @@ export const customProjects: CustomProject[] = [
       'Gained exposure to multiple frameworks'
     ],
     impact: [
-      'Reduced database migration time by 70%',
+      'Focused on a safer database migration workflow',
       'Improved website performance and maintainability'
     ]
   },

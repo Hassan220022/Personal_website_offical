@@ -20,7 +20,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Hey there! 👋 I'm Hassan's AI assistant, and I'm excited to chat with you! I know everything about Hassan's projects, skills, and professional journey. Whether you're a recruiter, potential collaborator, or just curious about his work - ask me anything! I love talking about his innovative projects and technical expertise. What would you like to know? 🚀",
+      content: "Hey there! 👋 I’m Mikawi’s AI assistant. Ask me about his projects, skills, and technical journey.",
       role: 'assistant',
       timestamp: new Date()
     }
@@ -124,7 +124,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(true)}
             className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full p-4 shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center backdrop-blur-sm border border-white/20"
-            aria-label="Chat with Hassan"
+            aria-label="Chat with Mikawi"
           >
             <MessageCircle size={24} className="animate-pulse" />
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-ping"></div>
@@ -160,7 +160,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                   <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm">Hassan's AI Assistant</h3>
+                  <h3 className="font-bold text-sm">Mikawi’s AI Assistant</h3>
                   <p className="text-xs opacity-90 flex items-center gap-1">
                     <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                     Online & ready to chat!
@@ -229,7 +229,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                             <Loader2 size={16} className="text-blue-400 opacity-30" />
                           </div>
                         </div>
-                        <span className="text-sm text-gray-600 dark:text-gray-300">Hassan is thinking...</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-300">Mikawi’s assistant is thinking...</span>
                         <div className="flex space-x-1">
                           <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
                           <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
@@ -254,7 +254,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder="Ask Hassan about his projects, skills, or experience..."
+                    placeholder="Ask Mikawi about his projects, skills, or experience..."
                     className="w-full border border-gray-300/50 dark:border-gray-600/50 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:bg-gray-800/50 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 backdrop-blur-sm transition-all duration-200 shadow-sm hover:shadow-md"
                     disabled={isLoading}
                   />
@@ -280,7 +280,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                 </motion.button>
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-                💬 Powered by Hassan's AI • Ask me anything!
+                💬 Powered by Mikawi’s AI • Ask me anything!
               </p>
             </div>
           </motion.div>

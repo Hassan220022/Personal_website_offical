@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, GraduationCap, Target, Heart, Code, Building, Lightbulb, Users, Smartphone, Home as HomeIcon, Brain } from 'lucide-react';
+import { Briefcase, GraduationCap, Target, Heart, Code, Lightbulb, Users, Home as HomeIcon, Brain } from 'lucide-react';
 
 const TimelineEvent: React.FC<{
   year: string;

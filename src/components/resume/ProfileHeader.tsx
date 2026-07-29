@@ -25,7 +25,7 @@ const ProfileHeader: React.FC = () => {
         {!imageError ? (
           <img
             src="https://avatars.githubusercontent.com/u/90404558?v=4"
-            alt="Hassan Mikawi - Professional Profile Photo"
+            alt="Portrait of Mikawi Sherif"
             className={`w-full h-full rounded-full object-cover shadow-lg relative transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'
               }`}
             loading="lazy"
@@ -53,7 +53,7 @@ const ProfileHeader: React.FC = () => {
           transition={{ delay: 0.3, duration: 0.5 }}
           className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 text-foreground"
         >
-          Hassan Mikawi
+          Mikawi Sherif
         </motion.h1>
 
         <motion.p

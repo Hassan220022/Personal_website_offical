@@ -178,8 +178,7 @@ Uses CSS variables for dynamic theming:
 
 ## 🔗 Links
 
-- [Live Demo](https://your-portfolio-url.com)
-- [GitHub Repository](https://github.com/yourusername/portfolio-website)
+
 
 ## ✨ Acknowledgments
 
