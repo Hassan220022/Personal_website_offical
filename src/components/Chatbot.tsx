@@ -123,7 +123,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
             whileHover={{ scale: 1.1, y: -2 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(true)}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full p-4 shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center backdrop-blur-sm border border-white/20"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full p-4 shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center backdrop-blur-sm border border-primary-foreground/10"
             aria-label="Chat with Mikawi"
           >
             <MessageCircle size={24} className="animate-pulse" />
@@ -141,17 +141,17 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
             animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
             exit={{ opacity: 0, y: 30, scale: 0.9, rotateX: 15 }}
             transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 30 }}
-            className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 w-80 sm:w-96 h-[32rem] sm:h-[36rem] flex flex-col overflow-hidden mb-4 ml-0 sm:ml-4"
+            className="bg-card/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-border w-80 sm:w-96 h-[32rem] sm:h-[36rem] flex flex-col overflow-hidden mb-4 ml-0 sm:ml-4"
             style={{
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%)',
+              background: 'linear-gradient(135deg, hsl(36 33% 98% / 0.95) 0%, hsl(38 38% 94% / 0.95) 100%)',
               ...(document.documentElement.classList.contains('dark') && {
-                background: 'linear-gradient(135deg, rgba(17,24,39,0.95) 0%, rgba(31,41,55,0.95) 100%)'
+                background: 'linear-gradient(135deg, hsl(24 9% 13% / 0.95) 0%, hsl(24 10% 9% / 0.95) 100%)'
               })
             }}
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white p-4 flex items-center justify-between relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-400/20 animate-pulse"></div>
+            <div className="bg-primary text-primary-foreground p-4 flex items-center justify-between relative overflow-hidden">
+              <div className="absolute inset-0 bg-primary-foreground/10 animate-pulse"></div>
               <div className="flex items-center space-x-3 relative z-10">
                 <div className="relative">
                   <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
@@ -192,15 +192,15 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                   }`}>
                     <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
                       message.role === 'user' 
-                        ? 'bg-blue-600 text-white' 
-                        : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-accent/20 text-accent-foreground border border-border'
                     }`}>
                       {message.role === 'user' ? <User size={12} /> : <Bot size={12} />}
                     </div>
                     <div className={`rounded-2xl p-3 shadow-sm ${
                       message.role === 'user'
-                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
-                        : 'bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 text-gray-900 dark:text-gray-100 border border-gray-200/50 dark:border-gray-600/50'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-accent/15 dark:bg-accent/25 text-foreground border border-border'
                     }`}>
                       <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                       <p className={`text-xs mt-1 opacity-70`}>
@@ -218,22 +218,22 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                   className="flex justify-start"
                 >
                   <div className="flex items-start space-x-2 max-w-[80%]">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 flex items-center justify-center">
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-600 text-muted-foreground flex items-center justify-center">
                       <Bot size={12} />
                     </div>
-                    <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-3 border border-gray-200/50 dark:border-gray-600/50 shadow-sm">
+                    <div className="bg-accent/15 dark:bg-accent/25 rounded-2xl p-3 border border-border shadow-sm">
                       <div className="flex items-center space-x-2">
                         <div className="relative">
-                          <Loader2 size={16} className="animate-spin text-blue-600" />
+                          <Loader2 size={16} className="animate-spin text-primary" />
                           <div className="absolute inset-0 animate-ping">
-                            <Loader2 size={16} className="text-blue-400 opacity-30" />
+                            <Loader2 size={16} className="text-primary opacity-30" />
                           </div>
                         </div>
-                        <span className="text-sm text-gray-600 dark:text-gray-300">Mikawi’s assistant is thinking...</span>
+                        <span className="text-sm text-muted-foreground">Mikawi’s assistant is thinking...</span>
                         <div className="flex space-x-1">
-                          <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
-                          <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
-                          <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                          <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+                          <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+                          <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
                         </div>
                       </div>
                     </div>
@@ -245,7 +245,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
             </div>
 
             {/* Input */}
-            <div className="border-t border-gray-200/50 dark:border-gray-700/50 p-4 bg-gradient-to-r from-gray-50/50 to-white/50 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm">
+            <div className="border-t border-border p-4 bg-card/60 backdrop-blur-sm">
               <div className="flex space-x-3">
                 <div className="flex-1 relative">
                   <input
@@ -255,15 +255,15 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                     onChange={(e) => setInputMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="Ask Mikawi about his projects, skills, or experience..."
-                    className="w-full border border-gray-300/50 dark:border-gray-600/50 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:bg-gray-800/50 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 backdrop-blur-sm transition-all duration-200 shadow-sm hover:shadow-md"
+                    className="w-full border border-border rounded-2xl px-4 py-3 text-sm bg-card text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/60 focus:border-primary backdrop-blur-sm transition-all duration-200 shadow-sm hover:shadow-md"
                     disabled={isLoading}
                   />
                   {isLoading && (
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                       <div className="flex space-x-1">
-                        <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
-                        <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
-                        <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                        <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+                        <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+                        <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
                       </div>
                     </div>
                   )}
@@ -273,13 +273,13 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                   disabled={!inputMessage.trim() || isLoading}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 text-white rounded-2xl p-3 transition-all duration-200 shadow-lg hover:shadow-xl disabled:shadow-sm backdrop-blur-sm border border-white/20"
+                  className="bg-primary hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground text-primary-foreground rounded-2xl p-3 transition-all duration-200 shadow-lg hover:shadow-xl disabled:shadow-sm backdrop-blur-sm border border-primary-foreground/10"
                   aria-label="Send message"
                 >
                   <Send size={16} className={isLoading ? 'animate-pulse' : ''} />
                 </motion.button>
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+              <p className="text-xs text-muted-foreground mt-2 text-center">
                 💬 Powered by Mikawi’s AI • Ask me anything!
               </p>
             </div>

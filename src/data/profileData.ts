@@ -138,3 +138,100 @@ export const goals = [
     category: 'personal'
   }
 ];
+
+
+// Recent GitHub activity (observed repositories; descriptions/links only,
+// no invented metrics). Items are labeled as GitHub activity.
+export interface GitHubActivityItem {
+  repo: string;
+  description: string;
+  url: string;
+}
+
+export const githubActivity: GitHubActivityItem[] = [
+  {
+    repo: 'router-raycast',
+    description: 'Self-hosted 9Router/OmniRoute Raycast extension. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/router-raycast',
+  },
+  {
+    repo: 'akwarr',
+    description: 'Radarr/Sonarr API shim for Jellyseerr Arabic Akwam downloads. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/akwarr',
+  },
+  {
+    repo: 'pos-mock',
+    description: 'Playwright binary-search tool for the max Aman POS transaction. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/pos-mock',
+  },
+  {
+    repo: 'beast-remote-menu-bar',
+    description: 'Beast remote menu bar. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/beast-remote-menu-bar',
+  },
+  {
+    repo: 'supabase_projects',
+    description: 'Supabase projects. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/supabase_projects',
+  },
+  {
+    repo: 'claude-code',
+    description: 'Rust rewrite project. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/claude-code',
+  },
+  {
+    repo: 'call_center',
+    description: 'Call center project. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/call_center',
+  },
+  {
+    repo: 'mcloud',
+    description: 'mcloud project. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/mcloud',
+  },
+  {
+    repo: 'axon',
+    description: 'Graph-powered code intelligence engine exposed via MCP/CLI. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/axon',
+  },
+  {
+    repo: 'flutter_ecommerce_app',
+    description: 'Flutter e-commerce app. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/flutter_ecommerce_app',
+  },
+  {
+    repo: 'ACPC_grading_System_Server_simulation',
+    description: 'ACPC grading system server simulation. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/ACPC_grading_System_Server_simulation',
+  },
+  {
+    repo: 'Flex',
+    description: 'Flex programming language. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/Flex',
+  },
+  {
+    repo: 'flex_web',
+    description: 'Web companion for the Flex programming language. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/flex_web',
+  },
+  {
+    repo: 'vscode-flex-grade',
+    description: 'VS Code extension for Flex grading. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/vscode-flex-grade',
+  },
+  {
+    repo: 'genai-agent-hackathon-cairo-2025',
+    description: 'GenAI agent hackathon (Cairo 2025) entry. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/genai-agent-hackathon-cairo-2025',
+  },
+  {
+    repo: 'context-engineering-intro',
+    description: 'Context engineering introduction. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/context-engineering-intro',
+  },
+  {
+    repo: 'Salam',
+    description: 'Salam project. (GitHub activity)',
+    url: 'https://github.com/Hassan220022/Salam',
+  },
+];

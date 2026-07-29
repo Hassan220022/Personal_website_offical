@@ -14,16 +14,16 @@ const TimelineEvent: React.FC<{
     className="flex gap-4 mb-8"
   >
     <div className="flex flex-col items-center">
-      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+      <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center text-primary">
         {icon}
       </div>
-      <div className="flex-1 w-0.5 bg-blue-200 my-2"></div>
+      <div className="flex-1 w-0.5 bg-accent/40 my-2"></div>
     </div>
     <div className="flex-1">
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <span className="text-sm text-blue-600 font-semibold">{year}</span>
+      <div className="bg-card border border-border p-6 rounded-lg shadow-md">
+        <span className="text-sm text-primary font-semibold">{year}</span>
         <h3 className="text-lg font-semibold mt-1">{title}</h3>
-        <p className="text-gray-600 mt-2">{description}</p>
+        <p className="text-muted-foreground mt-2">{description}</p>
       </div>
     </div>
   </motion.div>
@@ -37,15 +37,15 @@ const JourneyPage: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-12"
       >
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">My Journey</h1>
-        <p className="text-xl text-gray-600">
+        <h1 className="text-4xl font-bold text-foreground mb-4">My Journey</h1>
+        <p className="text-xl text-muted-foreground">
           Every step of my journey has shaped who I am today
         </p>
       </motion.div>
 
       <div className="space-y-12">
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Professional Journey</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-6">Professional Journey</h2>
           <div className="space-y-6">
             <TimelineEvent
               year="2024"
@@ -75,7 +75,7 @@ const JourneyPage: React.FC = () => {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Professional Experience</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-6">Professional Experience</h2>
           <div className="space-y-6">
             <TimelineEvent
               year="2023"
@@ -93,7 +93,7 @@ const JourneyPage: React.FC = () => {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Education & Learning</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-6">Education & Learning</h2>
           <div className="space-y-6">
             <TimelineEvent
               year="2024"
@@ -117,25 +117,25 @@ const JourneyPage: React.FC = () => {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Goals & Aspirations</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-6">Goals & Aspirations</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="bg-white p-6 rounded-lg shadow-md"
+              className="bg-card border border-border p-6 rounded-lg shadow-md"
             >
-              <Target className="w-8 h-8 text-blue-600 mb-4" />
+              <Target className="w-8 h-8 text-primary mb-4" />
               <h3 className="text-xl font-semibold mb-2">Professional Goals</h3>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 To advance AI technologies, develop innovative programming languages like Flex, and create impactful solutions in computer vision and smart home automation
               </p>
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="bg-white p-6 rounded-lg shadow-md"
+              className="bg-card border border-border p-6 rounded-lg shadow-md"
             >
-              <Heart className="w-8 h-8 text-blue-600 mb-4" />
+              <Heart className="w-8 h-8 text-primary mb-4" />
               <h3 className="text-xl font-semibold mb-2">Personal Mission</h3>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Empowering others through technology, knowledge sharing, and bridging the gap between students and the technical world through leadership and mentoring
               </p>
             </motion.div>

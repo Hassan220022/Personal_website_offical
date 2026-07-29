@@ -28,8 +28,6 @@ export default defineConfig({
           'ui-vendor': ['framer-motion', 'lucide-react', '@radix-ui/react-slider', '@radix-ui/react-tooltip'],
           // Utility libraries
           'utils-vendor': ['axios', 'date-fns'],
-          // AI/API libraries
-          'ai-vendor': ['openai', '@pinecone-database/pinecone'],
         },
       },
     },

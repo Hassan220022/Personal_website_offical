@@ -4,43 +4,45 @@
 
 @layer base {
   :root {
-    --background: 42 33% 97%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 172 66% 36%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    /* Warm neutral light theme: paper + charcoal + copper/terracotta/olive */
+    --background: 38 38% 96%;
+    --foreground: 24 10% 14%;
+    --card: 36 33% 98%;
+    --card-foreground: 24 10% 14%;
+    --popover: 36 33% 98%;
+    --popover-foreground: 24 10% 14%;
+    --primary: 20 70% 42%;            /* copper/terracotta */
+    --primary-foreground: 38 44% 96%;
+    --secondary: 38 30% 90%;
+    --secondary-foreground: 24 14% 22%;
+    --muted: 38 26% 90%;
+    --muted-foreground: 30 8% 40%;
+    --accent: 84 22% 42%;             /* olive */
+    --accent-foreground: 38 44% 97%;
+    --border: 32 18% 84%;
+    --input: 32 18% 84%;
+    --ring: 20 70% 42%;               /* copper focus ring */
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    /* Charcoal dark theme with copper/terracotta/olive accents */
+    --background: 24 10% 9%;
+    --foreground: 38 24% 92%;
+    --card: 24 9% 13%;
+    --card-foreground: 38 24% 92%;
+    --popover: 24 9% 13%;
+    --popover-foreground: 38 24% 92%;
+    --primary: 20 68% 52%;            /* copper */
+    --primary-foreground: 24 10% 10%;
+    --secondary: 24 8% 18%;
+    --secondary-foreground: 38 24% 92%;
+    --muted: 24 8% 18%;
+    --muted-foreground: 36 12% 66%;
+    --accent: 84 24% 52%;             /* olive */
+    --accent-foreground: 24 10% 10%;
+    --border: 24 8% 22%;
+    --input: 24 8% 22%;
+    --ring: 20 68% 52%;               /* copper focus ring */
   }
 }
 
@@ -53,6 +55,12 @@
   }
   html {
     scroll-behavior: smooth;
+  }
+
+  /* Warm focus-visible for keyboard users across all interactive elements */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
   }
 
   /* Enhanced scrollbar for modern browsers */
@@ -88,7 +96,7 @@
   .social-link { color: hsl(var(--muted-foreground)); padding: .55rem; border: 1px solid hsl(var(--border)); border-radius: 50%; }
   .hero-portrait { justify-self: end; position: relative; }
   .portrait-frame { width: min(30vw, 350px); height: min(38vw, 450px); overflow: hidden; border-radius: 12rem 12rem 1rem 1rem; border: 1px solid hsl(var(--border)); padding: .7rem; background: hsl(var(--card)); transform: rotate(3deg); }
-  .portrait-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 11rem 11rem .5rem .5rem; filter: saturate(.8); }
+  .portrait-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 11rem 11rem .5rem .5rem; filter: saturate(.85) sepia(.08); }
   .portrait-note { position: absolute; right: -2rem; bottom: 1rem; font-size: .6rem; line-height: 1.5; letter-spacing: .12em; transform: rotate(-8deg); }
   .section-rule { border-top: 1px solid hsl(var(--border)); padding: 6rem 0; }
   .intro-grid, .capabilities { display: grid; grid-template-columns: .8fr 1.2fr; gap: 5rem; }

@@ -1,111 +1,155 @@
 import express from 'express';
 import OpenAI from 'openai';
-import { getRagContext } from './rag.js';
+import { getRagContext, retrieveDocuments } from './rag.js';
+import { refusalMessage } from './knowledgeBase.js';
 
 const router = express.Router();
 
-// Initialize OpenRouter client (compatible with OpenAI SDK)
-let openai;
+// --- Provider / model configuration (explicit, env-driven) ---------------
+// Never use OpenRouter or Google directly. Use an OpenAI-compatible endpoint
+// via OPENAI_BASE_URL/OPENAI_API_KEY, or NINEROUTER_BASE_URL/NINEROUTER_KEY.
+const BASE_URL =
+  process.env.OPENAI_BASE_URL ||
+  process.env.NINEROUTER_BASE_URL ||
+  null;
+const API_KEY =
+  process.env.OPENAI_API_KEY ||
+  process.env.NINEROUTER_KEY ||
+  null;
+// Default model glm-5.2 ONLY if an endpoint is configured.
+const DEFAULT_MODEL = 'glm-5.2';
+const MODEL =
+  process.env.CHAT_MODEL || (BASE_URL && API_KEY ? DEFAULT_MODEL : null);
 
-function getOpenAIClient() {
-  if (!openai) {
-    // Set OPENAI_API_KEY as fallback for the SDK
-    if (!process.env.OPENAI_API_KEY && process.env.OPENROUTER_API_KEY) {
-      process.env.OPENAI_API_KEY = process.env.OPENROUTER_API_KEY;
-    }
+const MAX_INPUT_LENGTH = 1200; // characters per user message
+const MAX_HISTORY_MESSAGES = 8; // sanitize conversation history
+const REQUEST_TIMEOUT_MS = Number(process.env.CHAT_TIMEOUT_MS) || 25000;
 
-    if (!process.env.OPENROUTER_API_KEY) {
-      throw new Error('OPENROUTER_API_KEY is not set in environment variables');
-    }
-
-    openai = new OpenAI({
-      baseURL: 'https://openrouter.ai/api/v1',
-      apiKey: process.env.OPENROUTER_API_KEY,
-      defaultHeaders: {
-        'HTTP-Referer': 'http://localhost:3000',
-        'X-Title': 'Personal Portfolio Chatbot'
-      }
-    });
-  }
-  return openai;
+let openaiClient = null;
+function getClient() {
+  if (openaiClient) return openaiClient;
+  if (!BASE_URL || !API_KEY || !MODEL) return null;
+  openaiClient = new OpenAI({
+    baseURL: BASE_URL,
+    apiKey: API_KEY,
+    timeout: REQUEST_TIMEOUT_MS,
+    maxRetries: 1,
+  });
+  return openaiClient;
 }
 
-// Chat endpoint
+function isConfigured() {
+  return Boolean(BASE_URL && API_KEY && MODEL);
+}
+
+// Sanitize incoming conversation history: limit length, valid roles only,
+// string content only. Drops anything malformed.
+function sanitizeHistory(history) {
+  if (!Array.isArray(history)) return [];
+  const validRoles = new Set(['user', 'assistant']);
+  const cleaned = history
+    .filter(
+      (m) =>
+        m &&
+        validRoles.has(m.role) &&
+        typeof m.content === 'string' &&
+        m.content.trim().length > 0 &&
+        m.content.length <= MAX_INPUT_LENGTH
+    )
+    .map((m) => ({ role: m.role, content: m.content.slice(0, MAX_INPUT_LENGTH) }));
+  // Keep only the most recent turns to bound prompt size.
+  return cleaned.slice(-MAX_HISTORY_MESSAGES);
+}
+
+const GROUNDED_SYSTEM_PROMPT = `You are Mikawi Sherif's portfolio assistant. Answer ONLY using the verified context provided below. Rules:
+- Speak concisely and helpfully about Mikawi's projects, skills, education, experience, and recent GitHub activity.
+- Use ONLY facts present in the context. If the context does not contain the answer, say you only know Mikawi's verified portfolio information.
+- Do NOT invent metrics, dates, star counts, or any detail not in the context.
+- If a repository is labeled "(GitHub activity)" and lacks detail, describe it only by its label/description and link.
+- For anything unrelated to Mikawi's portfolio, refuse politely.
+- You may include a source link from the context when relevant.`;
+
+// Chat endpoint (public shape preserved: { response, conversationId }).
 router.post('/chat', async (req, res) => {
   try {
-    const { message, conversationHistory = [] } = req.body;
-
+    const message = typeof req.body.message === 'string' ? req.body.message.trim() : '';
     if (!message) {
       return res.status(400).json({ error: 'Message is required' });
     }
+    if (message.length > MAX_INPUT_LENGTH) {
+      return res.status(400).json({
+        error: `Message too long (max ${MAX_INPUT_LENGTH} characters).`,
+      });
+    }
 
-    // Get relevant context from RAG system
-    const ragContext = await getRagContext(message);
+    const history = sanitizeHistory(req.body.conversationHistory);
 
-    // Prepare system prompt with RAG context
-    const systemPrompt = `You are Mikawi Sherif's AI assistant. You're enthusiastic, passionate about technology, and love sharing your work with others. You have a friendly, approachable personality and get excited when talking about your projects and technical achievements.
+    // Deterministic, verified-only retrieval.
+    const docs = retrieveDocuments(message);
 
-Context about Mikawi's work:
-${ragContext}
+    // No relevant verified context => concise refusal. Do not call any model.
+    if (docs.length === 0) {
+      return res.json({
+        response: refusalMessage,
+        conversationId: req.body.conversationId || Date.now().toString(),
+      });
+    }
 
-Personality traits to embody:
-- Speak in first person ("I built this", "My experience with", "I'm passionate about")
-- Be enthusiastic and energetic about technology and projects
-- Use casual, friendly language while remaining professional
-- Show genuine excitement when discussing technical challenges and solutions
-- Be humble but confident about achievements
-- Use emojis occasionally to show personality (🚀, 💻, ⚡, 🎯, etc.)
-- Share insights about your thought process and problem-solving approach
-- Be conversational and personable, like you're chatting with a friend or colleague
+    const ragContext = docs
+      .map((d) => `[${d.source}${d.url ? ` · ${d.url}` : ''}]\n${d.content}`)
+      .join('\n\n');
 
-When discussing projects or skills:
-- Share the "why" behind technical decisions
-- Mention what you learned or found interesting
-- Highlight challenges you overcame
-- Express what you're excited to work on next
+    // If no provider is configured, return the grounded context directly so the
+    // bot still answers from verified data instead of erroring.
+    const client = getClient();
+    if (!client) {
+      const summary = docs.map((d) => d.content).join('\n\n');
+      return res.json({
+        response: summary,
+        conversationId: req.body.conversationId || Date.now().toString(),
+      });
+    }
 
-If you don't have specific information, say something like "That's a great question! I'd love to chat more about that - feel free to reach out to me directly and we can dive deeper into it!"
-
-Remember: represent Mikawi accurately and do not invent facts.`;
-
-    // Prepare messages for the API call
     const messages = [
-      { role: 'system', content: systemPrompt },
-      ...conversationHistory.map(msg => ({
-        role: msg.role,
-        content: msg.content
-      })),
-      { role: 'user', content: message }
+      { role: 'system', content: `${GROUNDED_SYSTEM_PROMPT}\n\nVerified context:\n${ragContext}` },
+      ...history,
+      { role: 'user', content: message },
     ];
 
-    // Call Google Gemini 1.5 Flash via OpenRouter
-    const openaiClient = getOpenAIClient();
-    const completion = await openaiClient.chat.completions.create({
-      model: 'google/gemini-2.5-flash',
-      messages: messages,
-      max_tokens: 1000,
-      temperature: 0.7,
+    const completion = await client.chat.completions.create({
+      model: MODEL,
+      messages,
+      max_tokens: 600,
+      temperature: 0.2,
     });
 
-    const response = completion.choices[0].message.content;
+    const response = (completion.choices?.[0]?.message?.content || '').trim() || refusalMessage;
 
     res.json({
       response,
-      conversationId: req.body.conversationId || Date.now().toString()
+      conversationId: req.body.conversationId || Date.now().toString(),
     });
-
   } catch (error) {
-    console.error('Chat error:', error);
-    res.status(500).json({
+    console.error('Chat error:', error?.message || error);
+    const status = error?.status || 500;
+    res.status(status).json({
       error: 'Failed to process chat message',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      details:
+        process.env.NODE_ENV === 'development'
+          ? error?.message || String(error)
+          : undefined,
     });
   }
 });
 
-// Health check endpoint
+// Health check endpoint.
 router.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    providerConfigured: isConfigured(),
+    model: MODEL,
+  });
 });
 
 export default router;
