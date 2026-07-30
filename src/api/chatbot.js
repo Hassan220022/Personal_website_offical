@@ -51,12 +51,15 @@ function isConfigured() {
   return Boolean(baseURL && apiKey && model);
 }
 
-function sanitizeModelOutput(text) {
+export function sanitizeModelOutput(text) {
   return String(text || '')
     .replace(/\r\n/g, '\n')
     .replace(/```[\w-]*\n?([\s\S]*?)```/g, '$1')
     .replace(/^#{1,6}\s+/gm, '')
     .replace(/^\s*>\s?/gm, '')
+    // Drop empty/placeholder source lines the model sometimes invents.
+    .replace(/^\s*[-*•]?\s*\*?\*?Source:?\*?\*?\s*https?:\/\/\s*$/gim, '')
+    .replace(/^\s*[-*•]?\s*\*?\*?Source:?\*?\*?\s*$/gim, '')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
@@ -120,7 +123,8 @@ Output format (strict):
   - **Name:** ...
   - **What it does:** ...
   - **Built with:** ...
-  - **Source:** https://...
+  - **Source:** https://...   (ONLY if a full real URL is present in the verified context)
+- Omit Source entirely when no URL is in the context. Never invent or leave "https://".
 - Do NOT use headings (#), tables, code fences, HTML, numbered lists, or nested bullets.
 - Do NOT wrap the whole answer in quotes.
 - Keep answers under 120 words unless the user asks for more detail.`;

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { formatDeterministicAnswer, isGreeting } from './chatbot.js';
+import { formatDeterministicAnswer, isGreeting, sanitizeModelOutput } from './chatbot.js';
 import { retrieveDocuments } from './rag.js';
 import { greetingMessage, refusalMessage } from './knowledgeBase.js';
 
@@ -48,4 +48,13 @@ test('deterministic answers prefer verified project facts over activity dumps', 
 test('skills phrasing still retrieves verified skills context', () => {
   const docs = retrieveDocuments('Summarize Mikawi skills in one short paragraph');
   assert.ok(docs.some((doc) => doc.id === 'skills'));
+});
+
+test('sanitize strips empty source placeholders', () => {
+  const cleaned = sanitizeModelOutput(
+    'G2SCV is a project.\n\n- **Name:** G2SCV\n- **Source:** https://\n',
+  );
+  assert.doesNotMatch(cleaned, /Source/i);
+  assert.doesNotMatch(cleaned, /https:\/\//);
+  assert.match(cleaned, /G2SCV is a project/);
 });
