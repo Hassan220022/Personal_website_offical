@@ -1,6 +1,5 @@
-import dotenv from 'dotenv';
-// Load environment variables FIRST
-dotenv.config();
+// Must be first so env is available before other modules read process.env.
+import 'dotenv/config';
 
 import express from 'express';
 import { fileURLToPath } from 'url';

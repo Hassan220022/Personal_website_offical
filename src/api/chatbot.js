@@ -5,43 +5,50 @@ import { greetingMessage, refusalMessage } from './knowledgeBase.js';
 
 const router = express.Router();
 
-// --- Provider / model configuration (explicit, env-driven) ---------------
+// Lazy env reads: ESM hoists imports before server.js can call dotenv.config().
 // Never use OpenRouter or Google directly. Use an OpenAI-compatible endpoint
 // via OPENAI_BASE_URL/OPENAI_API_KEY, or NINEROUTER_BASE_URL/NINEROUTER_KEY.
-const BASE_URL =
-  process.env.OPENAI_BASE_URL ||
-  process.env.NINEROUTER_BASE_URL ||
-  null;
-const API_KEY =
-  process.env.OPENAI_API_KEY ||
-  process.env.NINEROUTER_KEY ||
-  null;
-// Default model glm-5.2 ONLY if an endpoint is configured.
 const DEFAULT_MODEL = 'glm-5.2';
-const MODEL =
-  process.env.CHAT_MODEL || (BASE_URL && API_KEY ? DEFAULT_MODEL : null);
-
 const MAX_INPUT_LENGTH = 1200; // characters per user message
 const MAX_HISTORY_MESSAGES = 8; // sanitize conversation history
-const REQUEST_TIMEOUT_MS = Number(process.env.CHAT_TIMEOUT_MS) || 25000;
 const GREETING_RE =
   /^(hi|hello|hey|hola|salam|howdy|yo|good\s+(morning|afternoon|evening))([!?.\s]*)$/i;
 
+function providerConfig() {
+  const baseURL =
+    process.env.OPENAI_BASE_URL ||
+    process.env.NINEROUTER_BASE_URL ||
+    null;
+  const apiKey =
+    process.env.OPENAI_API_KEY ||
+    process.env.NINEROUTER_KEY ||
+    null;
+  const model =
+    process.env.CHAT_MODEL || (baseURL && apiKey ? DEFAULT_MODEL : null);
+  const timeoutMs = Number(process.env.CHAT_TIMEOUT_MS) || 25000;
+  return { baseURL, apiKey, model, timeoutMs };
+}
+
 let openaiClient = null;
+let openaiClientKey = '';
 function getClient() {
-  if (openaiClient) return openaiClient;
-  if (!BASE_URL || !API_KEY || !MODEL) return null;
+  const { baseURL, apiKey, model, timeoutMs } = providerConfig();
+  if (!baseURL || !apiKey || !model) return null;
+  const key = `${baseURL}|${apiKey}|${model}|${timeoutMs}`;
+  if (openaiClient && openaiClientKey === key) return openaiClient;
   openaiClient = new OpenAI({
-    baseURL: BASE_URL,
-    apiKey: API_KEY,
-    timeout: REQUEST_TIMEOUT_MS,
+    baseURL,
+    apiKey,
+    timeout: timeoutMs,
     maxRetries: 1,
   });
+  openaiClientKey = key;
   return openaiClient;
 }
 
 function isConfigured() {
-  return Boolean(BASE_URL && API_KEY && MODEL);
+  const { baseURL, apiKey, model } = providerConfig();
+  return Boolean(baseURL && apiKey && model);
 }
 
 export function isGreeting(message) {
@@ -143,8 +150,9 @@ router.post('/chat', async (req, res) => {
       { role: 'user', content: message },
     ];
 
+    const { model } = providerConfig();
     const completion = await client.chat.completions.create({
-      model: MODEL,
+      model,
       messages,
       max_tokens: 600,
       temperature: 0.2,
@@ -171,11 +179,12 @@ router.post('/chat', async (req, res) => {
 
 // Health check endpoint.
 router.get('/health', (req, res) => {
+  const { model } = providerConfig();
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
     providerConfigured: isConfigured(),
-    model: MODEL,
+    model,
   });
 });
 
