@@ -20,7 +20,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Hey there! 👋 I’m Mikawi’s AI assistant. Ask me about his projects, skills, and technical journey.",
+      content: "Hi! I’m Mikawi’s portfolio assistant. I answer only from his verified projects, skills, education, experience, and GitHub activity. What would you like to know?",
       role: 'assistant',
       timestamp: new Date()
     }
@@ -141,7 +141,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
             animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
             exit={{ opacity: 0, y: 30, scale: 0.9, rotateX: 15 }}
             transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 30 }}
-            className="bg-card/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-border w-80 sm:w-96 h-[32rem] sm:h-[36rem] flex flex-col overflow-hidden mb-4 ml-0 sm:ml-4"
+            className="bg-card/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-border w-80 sm:w-96 h-[calc(100vh-6rem)] max-h-[36rem] flex flex-col overflow-hidden mb-4 ml-0 sm:ml-4"
             style={{
               background: 'linear-gradient(135deg, hsl(36 33% 98% / 0.95) 0%, hsl(38 38% 94% / 0.95) 100%)',
               ...(document.documentElement.classList.contains('dark') && {
@@ -163,7 +163,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                   <h3 className="font-bold text-sm">Mikawi’s AI Assistant</h3>
                   <p className="text-xs opacity-90 flex items-center gap-1">
                     <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                    Online & ready to chat!
+                    Verified portfolio answers
                   </p>
                 </div>
               </div>
@@ -229,7 +229,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                             <Loader2 size={16} className="text-primary opacity-30" />
                           </div>
                         </div>
-                        <span className="text-sm text-muted-foreground">Mikawi’s assistant is thinking...</span>
+                        <span className="text-sm text-muted-foreground">Checking Mikawi’s portfolio...</span>
                         <div className="flex space-x-1">
                           <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
                           <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
@@ -254,6 +254,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
+                    maxLength={1200}
                     placeholder="Ask Mikawi about his projects, skills, or experience..."
                     className="w-full border border-border rounded-2xl px-4 py-3 text-sm bg-card text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/60 focus:border-primary backdrop-blur-sm transition-all duration-200 shadow-sm hover:shadow-md"
                     disabled={isLoading}
@@ -280,7 +281,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                 </motion.button>
               </div>
               <p className="text-xs text-muted-foreground mt-2 text-center">
-                💬 Powered by Mikawi’s AI • Ask me anything!
+                Answers only from Mikawi’s verified portfolio
               </p>
             </div>
           </motion.div>
