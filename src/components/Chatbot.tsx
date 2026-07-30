@@ -34,13 +34,15 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
   // Remove chatbot initialization dependency since data is pre-loaded
   // const { isInitialized, documentsProcessed } = useChatbot();
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
+    messagesEndRef.current?.scrollIntoView({ behavior, block: 'end' });
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (!isOpen) return;
+    const id = window.setTimeout(() => scrollToBottom(isLoading ? 'auto' : 'smooth'), 50);
+    return () => window.clearTimeout(id);
+  }, [messages, isLoading, isOpen]);
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -179,7 +181,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
 
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            <div className="flex-1 overflow-y-auto p-4 pb-6 space-y-3">
               {messages.map((message) => (
                 <motion.div
                   key={message.id}
@@ -241,7 +243,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                 </motion.div>
               )}
               
-              <div ref={messagesEndRef} />
+              <div ref={messagesEndRef} className="h-2 shrink-0" />
             </div>
 
             {/* Input */}

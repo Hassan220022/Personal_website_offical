@@ -206,5 +206,8 @@ export const knowledgeDocuments = [
   },
 ];
 
+export const greetingMessage =
+  "Hi! Ask me about Mikawi Sherif’s projects, skills, education, experience, or recent GitHub work.";
+
 export const refusalMessage =
   "I only know Mikawi Sherif's verified portfolio information — his projects, skills, education, experience, and recent GitHub activity. I can't help with that topic. Feel free to ask about Mikawi's work.";

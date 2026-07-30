@@ -1,7 +1,7 @@
 import express from 'express';
 import OpenAI from 'openai';
-import { getRagContext, retrieveDocuments } from './rag.js';
-import { refusalMessage } from './knowledgeBase.js';
+import { retrieveDocuments } from './rag.js';
+import { greetingMessage, refusalMessage } from './knowledgeBase.js';
 
 const router = express.Router();
 
@@ -24,6 +24,8 @@ const MODEL =
 const MAX_INPUT_LENGTH = 1200; // characters per user message
 const MAX_HISTORY_MESSAGES = 8; // sanitize conversation history
 const REQUEST_TIMEOUT_MS = Number(process.env.CHAT_TIMEOUT_MS) || 25000;
+const GREETING_RE =
+  /^(hi|hello|hey|hola|salam|howdy|yo|good\s+(morning|afternoon|evening))([!?.\s]*)$/i;
 
 let openaiClient = null;
 function getClient() {
@@ -40,6 +42,27 @@ function getClient() {
 
 function isConfigured() {
   return Boolean(BASE_URL && API_KEY && MODEL);
+}
+
+export function isGreeting(message) {
+  return GREETING_RE.test(String(message || '').trim());
+}
+
+// Prefer verified profile/project docs over sparse GitHub activity labels.
+export function formatDeterministicAnswer(docs) {
+  const primary = docs.filter((d) => !String(d.id).startsWith('activity-'));
+  const activity = docs.filter((d) => String(d.id).startsWith('activity-'));
+  const ordered = (primary.length ? primary : activity).slice(0, 2);
+  return ordered
+    .map((d) => {
+      let text = String(d.content || '')
+        .replace(/\s*\(GitHub activity\)\s*$/i, '')
+        .trim();
+      if (d.url) text += `\n${d.url}`;
+      return text;
+    })
+    .filter(Boolean)
+    .join('\n\n');
 }
 
 // Sanitize incoming conversation history: limit length, valid roles only,
@@ -82,6 +105,11 @@ router.post('/chat', async (req, res) => {
       });
     }
 
+    const conversationId = req.body.conversationId || Date.now().toString();
+    if (isGreeting(message)) {
+      return res.json({ response: greetingMessage, conversationId });
+    }
+
     const history = sanitizeHistory(req.body.conversationHistory);
 
     // Deterministic, verified-only retrieval.
@@ -91,7 +119,7 @@ router.post('/chat', async (req, res) => {
     if (docs.length === 0) {
       return res.json({
         response: refusalMessage,
-        conversationId: req.body.conversationId || Date.now().toString(),
+        conversationId,
       });
     }
 
@@ -99,14 +127,13 @@ router.post('/chat', async (req, res) => {
       .map((d) => `[${d.source}${d.url ? ` · ${d.url}` : ''}]\n${d.content}`)
       .join('\n\n');
 
-    // If no provider is configured, return the grounded context directly so the
-    // bot still answers from verified data instead of erroring.
+    // If no provider is configured, return a clean verified answer instead of
+    // dumping raw multi-document retrieval blobs into the chat UI.
     const client = getClient();
     if (!client) {
-      const summary = docs.map((d) => d.content).join('\n\n');
       return res.json({
-        response: summary,
-        conversationId: req.body.conversationId || Date.now().toString(),
+        response: formatDeterministicAnswer(docs) || refusalMessage,
+        conversationId,
       });
     }
 
@@ -127,7 +154,7 @@ router.post('/chat', async (req, res) => {
 
     res.json({
       response,
-      conversationId: req.body.conversationId || Date.now().toString(),
+      conversationId,
     });
   } catch (error) {
     console.error('Chat error:', error?.message || error);
