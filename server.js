@@ -51,12 +51,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Import API routes
 import chatbotRoutes from './src/api/chatbot.js';
-import ragRoutes from './src/api/rag.js';
 import githubRoutes from './src/api/github.js';
 
 // API routes
 app.use('/api/chatbot', chatbotRoutes);
-app.use('/api/rag', ragRoutes);
 app.use('/api/github', githubRoutes);
 
 // Health check endpoint

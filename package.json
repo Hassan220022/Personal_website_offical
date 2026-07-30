@@ -8,11 +8,11 @@
     "start": "node server.js",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "test": "node --test src/api/*.test.js",
     "preview": "vite preview"
   },
   "dependencies": {
     "-": "^0.0.1",
-    "@pinecone-database/pinecone": "^6.1.2",
     "@radix-ui/react-slider": "^1.1.2",
     "@radix-ui/react-tooltip": "^1.0.7",
     "axios": "^1.6.7",
