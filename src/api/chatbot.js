@@ -8,7 +8,7 @@ const router = express.Router();
 // Lazy env reads: ESM hoists imports before server.js can call dotenv.config().
 // Never use OpenRouter or Google directly. Use an OpenAI-compatible endpoint
 // via OPENAI_BASE_URL/OPENAI_API_KEY, or NINEROUTER_BASE_URL/NINEROUTER_KEY.
-const DEFAULT_MODEL = 'glm-5.2';
+const DEFAULT_MODEL = 'gpt-5.4-mini';
 const MAX_INPUT_LENGTH = 1200; // characters per user message
 const MAX_HISTORY_MESSAGES = 8; // sanitize conversation history
 const GREETING_RE =
