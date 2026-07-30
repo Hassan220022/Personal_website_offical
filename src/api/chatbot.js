@@ -51,6 +51,16 @@ function isConfigured() {
   return Boolean(baseURL && apiKey && model);
 }
 
+function sanitizeModelOutput(text) {
+  return String(text || '')
+    .replace(/\r\n/g, '\n')
+    .replace(/```[\w-]*\n?([\s\S]*?)```/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/^\s*>\s?/gm, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 export function isGreeting(message) {
   return GREETING_RE.test(String(message || '').trim());
 }
@@ -91,13 +101,29 @@ function sanitizeHistory(history) {
   return cleaned.slice(-MAX_HISTORY_MESSAGES);
 }
 
-const GROUNDED_SYSTEM_PROMPT = `You are Mikawi Sherif's portfolio assistant. Answer ONLY using the verified context provided below. Rules:
-- Speak concisely and helpfully about Mikawi's projects, skills, education, experience, and recent GitHub activity.
-- Use ONLY facts present in the context. If the context does not contain the answer, say you only know Mikawi's verified portfolio information.
+const GROUNDED_SYSTEM_PROMPT = `You are Mikawi Sherif's portfolio assistant. Answer ONLY using the verified context provided below.
+
+Content rules:
+- Speak concisely about Mikawi's projects, skills, education, experience, and recent GitHub activity.
+- Use ONLY facts present in the context. If the context lacks the answer, say you only know Mikawi's verified portfolio information.
 - Do NOT invent metrics, dates, star counts, or any detail not in the context.
 - If a repository is labeled "(GitHub activity)" and lacks detail, describe it only by its label/description and link.
 - For anything unrelated to Mikawi's portfolio, refuse politely.
-- You may include a source link from the context when relevant.`;
+
+Output format (strict):
+- Use clean Markdown only.
+- Structure answers as short paragraphs and/or bullet lists.
+- Allowed Markdown: paragraphs, blank-line separation, "- " bullets, **bold labels**, and plain https links.
+- Prefer this project shape when relevant:
+  One short intro sentence.
+
+  - **Name:** ...
+  - **What it does:** ...
+  - **Built with:** ...
+  - **Source:** https://...
+- Do NOT use headings (#), tables, code fences, HTML, numbered lists, or nested bullets.
+- Do NOT wrap the whole answer in quotes.
+- Keep answers under 120 words unless the user asks for more detail.`;
 
 // Chat endpoint (public shape preserved: { response, conversationId }).
 router.post('/chat', async (req, res) => {
@@ -158,7 +184,9 @@ router.post('/chat', async (req, res) => {
       temperature: 0.2,
     });
 
-    const response = (completion.choices?.[0]?.message?.content || '').trim() || refusalMessage;
+    const response =
+      sanitizeModelOutput(completion.choices?.[0]?.message?.content || '') ||
+      refusalMessage;
 
     res.json({
       response,

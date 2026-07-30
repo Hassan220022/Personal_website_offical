@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Loader2, User, Bot } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { sendChatMessage } from '../services/chatbot';
+import { ChatMarkdown } from '../utils/chatMarkdown';
 // import { useChatbot } from '../hooks/useChatbot'; // Removed since data is pre-loaded
 
 interface Message {
@@ -204,7 +205,11 @@ const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                         ? 'bg-primary text-primary-foreground'
                         : 'bg-accent/15 dark:bg-accent/25 text-foreground border border-border'
                     }`}>
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      {message.role === 'assistant' ? (
+                        <ChatMarkdown content={message.content} />
+                      ) : (
+                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      )}
                       <p className={`text-xs mt-1 opacity-70`}>
                         {formatTime(message.timestamp)}
                       </p>
