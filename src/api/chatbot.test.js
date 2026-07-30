@@ -44,3 +44,8 @@ test('deterministic answers prefer verified project facts over activity dumps', 
   assert.doesNotMatch(answer, /GitHub activity/i);
   assert.doesNotMatch(answer, /^flex_web:/m);
 });
+
+test('skills phrasing still retrieves verified skills context', () => {
+  const docs = retrieveDocuments('Summarize Mikawi skills in one short paragraph');
+  assert.ok(docs.some((doc) => doc.id === 'skills'));
+});

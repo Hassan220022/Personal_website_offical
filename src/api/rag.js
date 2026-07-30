@@ -16,7 +16,10 @@ const STOPWORDS = new Set([
   'do', 'does', 'did', 'what', 'who', 'when', 'where', 'why', 'how', 'about',
   'tell', 'please', 'can', 'could', 'would', 'will', 'have', 'has', 'had',
   'not', 'but', 'if', 'so', 'than', 'then', 'there', 'their', 'like', 'want',
-  'know', 'use', 'used', 'using', 'work', 'working', 'also',
+  'know', 'use', 'used', 'using', 'work', 'working', 'also', 'summarize',
+  'summary', 'short', 'paragraph', 'brief', 'describe', 'explain', 'list',
+  'give', 'show', 'some', 'any', 'more', 'into', 'one', 'two', 'few',
+  'mikawi', 'sherif', 'hassan',
 ]);
 
 function tokenize(text) {
