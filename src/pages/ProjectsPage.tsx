@@ -1,91 +1,78 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
-import { getStarredRepositories, getAllRepositories } from '../services/github';
+import { getAllRepositories, getStarredRepositories } from '../services/github';
 import ProjectCard from '../components/ProjectCard';
-import CustomProjectCard from '../components/CustomProjectCard';
-import { customProjects } from '../data/customProjects';
+import type { Repository } from '../types/github';
+
+type Filter = 'all' | 'starred';
 
 const ProjectsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState<'all' | 'starred' | 'custom'>('all');
-  const [techFilter, setTechFilter] = useState<string>('');
-  const [categoryFilter, setCategoryFilter] = useState<string>('');
+  const [filter, setFilter] = useState<Filter>('all');
+  const [techFilter, setTechFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
 
-  const { data: repos = [], isLoading: reposLoading } = useQuery(
+  const { data: repos = [], isLoading: reposLoading, error: reposError } = useQuery(
     'repositories',
     getAllRepositories,
-    {
-      staleTime: 5 * 60 * 1000, // Cache for 5 minutes
-      retry: 2,
-    }
+    { staleTime: 5 * 60 * 1000, retry: 2 },
   );
 
-  const { data: starredRepos = [], isLoading: starredLoading } = useQuery(
+  const { data: starredRepos = [], isLoading: starredLoading, error: starredError } = useQuery(
     'starredRepositories',
     getStarredRepositories,
-    {
-      staleTime: 5 * 60 * 1000,
-      retry: 2,
-    }
+    { staleTime: 5 * 60 * 1000, retry: 2 },
   );
 
+  const sourceRepos: Repository[] = filter === 'starred' ? starredRepos : repos;
+
   const filteredRepos = useMemo(() => {
-    if (filter === 'custom') return [];
-    const reposToFilter = filter === 'all' ? repos : starredRepos;
-    
-    return reposToFilter.filter(repo => {
-      const matchesSearch = (
-        repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (repo.description?.toLowerCase() || '').includes(searchTerm.toLowerCase())
-      );
-      
-      const matchesTech = !techFilter || 
+    const q = searchTerm.trim().toLowerCase();
+    return sourceRepos.filter((repo) => {
+      const haystack = [
+        repo.name,
+        repo.description || '',
+        repo.language || '',
+        ...(repo.topics || []),
+        ...(repo.technologies || []),
+      ]
+        .join(' ')
+        .toLowerCase();
+
+      const matchesSearch = !q || haystack.includes(q);
+      const matchesTech =
+        !techFilter ||
         repo.language?.toLowerCase() === techFilter.toLowerCase() ||
-        repo.topics?.some(topic => topic.toLowerCase().includes(techFilter.toLowerCase()));
-
-      return matchesSearch && matchesTech;
-    });
-  }, [repos, starredRepos, searchTerm, techFilter, filter]);
-
-  const filteredCustomProjects = useMemo(() => {
-    if (filter !== 'custom' && filter !== 'all') return [];
-    
-    return customProjects.filter(project => {
-      const matchesSearch = (
-        project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      
-      const matchesTech = !techFilter || 
-        project.technologies.some(tech => tech.toLowerCase().includes(techFilter.toLowerCase()));
-      
-      const matchesCategory = !categoryFilter || project.category === categoryFilter;
+        repo.topics?.some((t) => t.toLowerCase() === techFilter.toLowerCase()) ||
+        repo.technologies?.some((t) => t.toLowerCase() === techFilter.toLowerCase());
+      const matchesCategory = !categoryFilter || repo.category === categoryFilter;
 
       return matchesSearch && matchesTech && matchesCategory;
     });
-  }, [searchTerm, techFilter, categoryFilter, filter]);
+  }, [sourceRepos, searchTerm, techFilter, categoryFilter]);
 
   const technologies = useMemo(() => {
     const techSet = new Set<string>();
-    repos.forEach(repo => {
+    repos.forEach((repo) => {
       if (repo.language) techSet.add(repo.language);
-      repo.topics?.forEach(topic => techSet.add(topic));
+      repo.topics?.forEach((topic) => techSet.add(topic));
+      repo.technologies?.forEach((tech) => techSet.add(tech));
     });
-    customProjects.forEach(project => {
-      project.technologies.forEach(tech => techSet.add(tech));
-    });
-    return Array.from(techSet).sort();
+    return Array.from(techSet).sort((a, b) => a.localeCompare(b));
   }, [repos]);
 
   const categories = useMemo(() => {
     const categorySet = new Set<string>();
-    customProjects.forEach(project => {
-      categorySet.add(project.category);
+    repos.forEach((repo) => {
+      if (repo.category) categorySet.add(repo.category);
     });
-    return Array.from(categorySet).sort();
-  }, []);
+    return Array.from(categorySet).sort((a, b) => a.localeCompare(b));
+  }, [repos]);
+
+  const loading = reposLoading || (filter === 'starred' && starredLoading);
+  const error = filter === 'starred' ? starredError : reposError;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -94,97 +81,93 @@ const ProjectsPage: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-8"
       >
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col sm:flex-row gap-4 items-center">
-            <div className="w-full sm:w-96">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search projects..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-lg focus:ring-2 ring-primary/20 focus:border-primary transition-colors"
-                />
-              </div>
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-bold">Projects</h1>
+          <p className="text-muted-foreground">
+            Live from GitHub — every public repository for Hassan220022.
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 items-center">
+          <div className="w-full sm:w-96">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search GitHub projects..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-lg focus:ring-2 ring-primary/20 focus:border-primary transition-colors"
+              />
             </div>
-            <select
-              value={techFilter}
-              onChange={(e) => setTechFilter(e.target.value)}
-              className="w-full sm:w-48 p-2 bg-card border border-border rounded-lg focus:ring-2 ring-primary/20 focus:border-primary"
-            >
-              <option value="">All Technologies</option>
-              {technologies.map(tech => (
-                <option key={tech} value={tech}>{tech}</option>
-              ))}
-            </select>
-            {(filter === 'custom' || filter === 'all') && (
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="w-full sm:w-48 p-2 bg-card border border-border rounded-lg focus:ring-2 ring-primary/20 focus:border-primary"
-              >
-                <option value="">All Categories</option>
-                {categories.map(category => (
-                  <option key={category} value={category}>
-                    {category.charAt(0).toUpperCase() + category.slice(1).replace('-', ' ')}
-                  </option>
-                ))}
-              </select>
-            )}
-            <div className="flex gap-2">
-              <FilterButton active={filter === 'all'} onClick={() => setFilter('all')} label="All" />
-              <FilterButton active={filter === 'custom'} onClick={() => setFilter('custom')} label="Featured" />
-              <FilterButton active={filter === 'starred'} onClick={() => setFilter('starred')} label="GitHub" />
-            </div>
+          </div>
+
+          <select
+            value={techFilter}
+            onChange={(e) => setTechFilter(e.target.value)}
+            className="w-full sm:w-48 p-2 bg-card border border-border rounded-lg focus:ring-2 ring-primary/20 focus:border-primary"
+          >
+            <option value="">All Technologies</option>
+            {technologies.map((tech) => (
+              <option key={tech} value={tech}>
+                {tech}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="w-full sm:w-48 p-2 bg-card border border-border rounded-lg focus:ring-2 ring-primary/20 focus:border-primary"
+          >
+            <option value="">All Categories</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category.charAt(0).toUpperCase() + category.slice(1).replace('-', ' ')}
+              </option>
+            ))}
+          </select>
+
+          <div className="flex gap-2">
+            <FilterButton active={filter === 'all'} onClick={() => setFilter('all')} label="All repos" />
+            <FilterButton
+              active={filter === 'starred'}
+              onClick={() => setFilter('starred')}
+              label="Starred"
+            />
           </div>
         </div>
 
-        {(reposLoading || starredLoading) ? (
+        {loading ? (
           <div className="flex flex-col items-center justify-center h-64 gap-4">
             <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-            <p className="text-muted-foreground">Loading repositories...</p>
+            <p className="text-muted-foreground">Loading repositories from GitHub...</p>
+          </div>
+        ) : error ? (
+          <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-6 text-center">
+            <p className="font-medium">Could not load GitHub repositories.</p>
+            <p className="text-sm text-muted-foreground mt-1">Try again in a moment.</p>
           </div>
         ) : (
           <>
             <p className="text-muted-foreground">
-              Found {filter === 'custom' ? filteredCustomProjects.length : 
-                     filter === 'all' ? filteredRepos.length + filteredCustomProjects.length : 
-                     filteredRepos.length} projects
+              Found {filteredRepos.length} project{filteredRepos.length === 1 ? '' : 's'}
+              {filter === 'all' ? ` · ${repos.length} total public repos` : ''}
             </p>
-            
-            {/* Custom Projects Section */}
-            {(filter === 'custom' || filter === 'all') && filteredCustomProjects.length > 0 && (
-              <div className="space-y-4">
-                {filter === 'all' && (
-                  <h2 className="text-2xl font-bold text-foreground">Featured Projects</h2>
-                )}
-                <motion.div
-                  layout
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-                >
-                  {filteredCustomProjects.map((project) => (
-                    <CustomProjectCard key={project.id} project={project} />
-                  ))}
-                </motion.div>
+
+            {filteredRepos.length === 0 ? (
+              <div className="rounded-lg border border-border p-8 text-center text-muted-foreground">
+                No repositories match these filters.
               </div>
-            )}
-            
-            {/* GitHub Repositories Section */}
-            {(filter === 'starred' || filter === 'all') && filteredRepos.length > 0 && (
-              <div className="space-y-4">
-                {filter === 'all' && (
-                  <h2 className="text-2xl font-bold text-foreground">GitHub Repositories</h2>
-                )}
-                <motion.div
-                  layout
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-                >
-                  {filteredRepos.map((repo) => (
-                    <ProjectCard key={repo.id} repo={repo} />
-                  ))}
-                </motion.div>
-              </div>
+            ) : (
+              <motion.div
+                layout
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+              >
+                {filteredRepos.map((repo) => (
+                  <ProjectCard key={repo.id} repo={repo} />
+                ))}
+              </motion.div>
             )}
           </>
         )}
