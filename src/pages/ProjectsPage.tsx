@@ -14,19 +14,34 @@ const ProjectsPage: React.FC = () => {
   const [techFilter, setTechFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
 
-  const { data: repos = [], isLoading: reposLoading, error: reposError } = useQuery(
-    'repositories',
-    getAllRepositories,
-    { staleTime: 5 * 60 * 1000, retry: 2 },
-  );
+  const {
+    data: repos = [],
+    isLoading: reposLoading,
+    error: reposError,
+  } = useQuery('repositories', getAllRepositories, {
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+  });
 
-  const { data: starredRepos = [], isLoading: starredLoading, error: starredError } = useQuery(
-    'starredRepositories',
-    getStarredRepositories,
-    { staleTime: 5 * 60 * 1000, retry: 2 },
-  );
+  const {
+    data: starredRepos = [],
+    isLoading: starredLoading,
+    error: starredError,
+  } = useQuery('starredRepositories', getStarredRepositories, {
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+  });
 
-  const sourceRepos: Repository[] = filter === 'starred' ? starredRepos : repos;
+  const sourceRepos: Repository[] = useMemo(() => {
+    const list = filter === 'starred' ? starredRepos : repos;
+    // Stable sort: recently updated first, then name.
+    return [...list].sort((a, b) => {
+      const ta = Date.parse(a.updated_at || '') || 0;
+      const tb = Date.parse(b.updated_at || '') || 0;
+      if (tb !== ta) return tb - ta;
+      return a.name.localeCompare(b.name);
+    });
+  }, [filter, repos, starredRepos]);
 
   const filteredRepos = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
@@ -42,11 +57,12 @@ const ProjectsPage: React.FC = () => {
         .toLowerCase();
 
       const matchesSearch = !q || haystack.includes(q);
+      const tech = techFilter.toLowerCase();
       const matchesTech =
-        !techFilter ||
-        repo.language?.toLowerCase() === techFilter.toLowerCase() ||
-        repo.topics?.some((t) => t.toLowerCase() === techFilter.toLowerCase()) ||
-        repo.technologies?.some((t) => t.toLowerCase() === techFilter.toLowerCase());
+        !tech ||
+        (repo.language || '').toLowerCase() === tech ||
+        (repo.topics || []).some((t) => t.toLowerCase() === tech) ||
+        (repo.technologies || []).some((t) => t.toLowerCase() === tech);
       const matchesCategory = !categoryFilter || repo.category === categoryFilter;
 
       return matchesSearch && matchesTech && matchesCategory;
@@ -54,21 +70,24 @@ const ProjectsPage: React.FC = () => {
   }, [sourceRepos, searchTerm, techFilter, categoryFilter]);
 
   const technologies = useMemo(() => {
-    const techSet = new Set<string>();
-    repos.forEach((repo) => {
-      if (repo.language) techSet.add(repo.language);
-      repo.topics?.forEach((topic) => techSet.add(topic));
-      repo.technologies?.forEach((tech) => techSet.add(tech));
-    });
-    return Array.from(techSet).sort((a, b) => a.localeCompare(b));
+    const map = new Map<string, string>();
+    for (const repo of repos) {
+      for (const value of [repo.language, ...(repo.topics || []), ...(repo.technologies || [])]) {
+        const v = (value || '').trim();
+        if (!v) continue;
+        const key = v.toLowerCase();
+        if (!map.has(key)) map.set(key, v);
+      }
+    }
+    return Array.from(map.values()).sort((a, b) => a.localeCompare(b));
   }, [repos]);
 
   const categories = useMemo(() => {
-    const categorySet = new Set<string>();
-    repos.forEach((repo) => {
-      if (repo.category) categorySet.add(repo.category);
-    });
-    return Array.from(categorySet).sort((a, b) => a.localeCompare(b));
+    const set = new Set<string>();
+    for (const repo of repos) {
+      if (repo.category) set.add(repo.category);
+    }
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [repos]);
 
   const loading = reposLoading || (filter === 'starred' && starredLoading);
@@ -88,12 +107,12 @@ const ProjectsPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 items-center">
-          <div className="w-full sm:w-96">
+        <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
+          <div className="w-full lg:flex-1">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
               <input
-                type="text"
+                type="search"
                 placeholder="Search GitHub projects..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -105,11 +124,11 @@ const ProjectsPage: React.FC = () => {
           <select
             value={techFilter}
             onChange={(e) => setTechFilter(e.target.value)}
-            className="w-full sm:w-48 p-2 bg-card border border-border rounded-lg focus:ring-2 ring-primary/20 focus:border-primary"
+            className="w-full lg:w-48 p-2 bg-card border border-border rounded-lg focus:ring-2 ring-primary/20 focus:border-primary"
           >
             <option value="">All Technologies</option>
             {technologies.map((tech) => (
-              <option key={tech} value={tech}>
+              <option key={tech.toLowerCase()} value={tech}>
                 {tech}
               </option>
             ))}
@@ -118,7 +137,7 @@ const ProjectsPage: React.FC = () => {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="w-full sm:w-48 p-2 bg-card border border-border rounded-lg focus:ring-2 ring-primary/20 focus:border-primary"
+            className="w-full lg:w-48 p-2 bg-card border border-border rounded-lg focus:ring-2 ring-primary/20 focus:border-primary"
           >
             <option value="">All Categories</option>
             {categories.map((category) => (
@@ -128,7 +147,7 @@ const ProjectsPage: React.FC = () => {
             ))}
           </select>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 shrink-0">
             <FilterButton active={filter === 'all'} onClick={() => setFilter('all')} label="All repos" />
             <FilterButton
               active={filter === 'starred'}
@@ -162,7 +181,7 @@ const ProjectsPage: React.FC = () => {
             ) : (
               <motion.div
                 layout
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
               >
                 {filteredRepos.map((repo) => (
                   <ProjectCard key={repo.id} repo={repo} />

@@ -2,15 +2,18 @@ export interface Repository {
   id: number;
   name: string;
   full_name: string;
-  description: string;
+  description: string | null;
   html_url: string;
   stargazers_count: number;
-  language: string;
+  forks_count?: number;
+  language: string | null;
   updated_at: string;
   created_at: string;
   topics: string[];
-  homepage: string;
-  // Enhanced fields to match CustomProject structure
+  homepage: string | null;
+  fork?: boolean;
+  archived?: boolean;
+  // Optional enriched fields
   status?: 'completed' | 'in-progress' | 'archived';
   features?: string[];
   highlights?: string[];

@@ -7,6 +7,28 @@ const GITHUB_API = 'https://api.github.com';
 const USERNAME = 'Hassan220022';
 const PER_PAGE = 100;
 
+function normalizeRepos(repos) {
+  if (!Array.isArray(repos)) return [];
+  return repos
+    .filter((repo) => repo && typeof repo === 'object' && repo.id && repo.name && repo.html_url)
+    .map((repo) => ({
+      id: repo.id,
+      name: String(repo.name),
+      full_name: repo.full_name || `${USERNAME}/${repo.name}`,
+      description: repo.description ?? null,
+      html_url: repo.html_url,
+      stargazers_count: Number(repo.stargazers_count || 0),
+      forks_count: Number(repo.forks_count || 0),
+      language: repo.language ?? null,
+      updated_at: repo.updated_at || repo.pushed_at || repo.created_at || new Date().toISOString(),
+      created_at: repo.created_at || repo.updated_at || new Date().toISOString(),
+      topics: Array.isArray(repo.topics) ? repo.topics.filter(Boolean) : [],
+      homepage: repo.homepage || null,
+      fork: Boolean(repo.fork),
+      archived: Boolean(repo.archived),
+    }));
+}
+
 // Get GitHub profile
 router.get('/profile', async (req, res) => {
   try {
@@ -36,13 +58,7 @@ router.get('/repositories', async (req, res) => {
 
     const { data } = await axios.get(`${GITHUB_API}/users/${USERNAME}/repos?sort=updated&per_page=${PER_PAGE}`, { headers });
 
-    // Ensure created_at is included in the response
-    const enrichedData = data.map(repo => ({
-      ...repo,
-      created_at: repo.created_at || repo.updated_at
-    }));
-
-    res.json(enrichedData);
+    res.json(normalizeRepos(data));
   } catch (error) {
     console.error('GitHub repositories error:', error.message);
     res.status(500).json({
@@ -62,13 +78,7 @@ router.get('/starred', async (req, res) => {
 
     const { data } = await axios.get(`${GITHUB_API}/users/${USERNAME}/starred`, { headers });
 
-    // Ensure created_at is included in the response
-    const enrichedData = data.map(repo => ({
-      ...repo,
-      created_at: repo.created_at || repo.updated_at
-    }));
-
-    res.json(enrichedData);
+    res.json(normalizeRepos(data));
   } catch (error) {
     console.error('GitHub starred repositories error:', error.message);
     res.status(500).json({
@@ -111,13 +121,7 @@ router.get('/all', async (req, res) => {
       page++;
     }
 
-    // Ensure created_at is included in the response
-    const enrichedRepos = allRepos.map(repo => ({
-      ...repo,
-      created_at: repo.created_at || repo.updated_at
-    }));
-
-    res.json(enrichedRepos);
+    res.json(normalizeRepos(allRepos));
   } catch (error) {
     console.error('GitHub all repositories error:', error.message);
     res.status(500).json({
