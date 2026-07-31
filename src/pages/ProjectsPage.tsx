@@ -163,9 +163,18 @@ const ProjectsPage: React.FC = () => {
             <p className="text-muted-foreground">Loading repositories from GitHub...</p>
           </div>
         ) : error ? (
-          <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-6 text-center">
+          <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-6 text-center space-y-3">
             <p className="font-medium">Could not load GitHub repositories.</p>
-            <p className="text-sm text-muted-foreground mt-1">Try again in a moment.</p>
+            <p className="text-sm text-muted-foreground">
+              The live GitHub API request failed. Refresh, or try again in a moment.
+            </p>
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 rounded-lg bg-primary text-primary-foreground"
+            >
+              Retry
+            </button>
           </div>
         ) : (
           <>

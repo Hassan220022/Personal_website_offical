@@ -17,6 +17,9 @@ const BASE_PORT = 3000;
 const instanceId = process.env.NODE_APP_INSTANCE || 0;
 const PORT = process.env.PORT || (BASE_PORT + parseInt(instanceId));
 
+// Behind Cloudflare / reverse proxy — needed so rate-limit can read X-Forwarded-For.
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
@@ -34,8 +37,12 @@ app.use(cors());
 // Rate limiting for API endpoints
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.'
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests from this IP, please try again later.' },
+  // Don't hard-crash the request path if proxy headers are weird.
+  validate: { xForwardedForHeader: false },
 });
 
 // Apply rate limiting to API routes
