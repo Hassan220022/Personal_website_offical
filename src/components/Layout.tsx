@@ -13,7 +13,6 @@ const Layout: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <a href="#main-content" className="skip-link">Skip to content</a>
       <nav aria-label="Primary navigation" className="fixed w-full top-0 bg-card/80 backdrop-blur-sm shadow-sm z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
